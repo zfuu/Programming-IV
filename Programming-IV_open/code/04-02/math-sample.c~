@@ -1,0 +1,312 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-2022-JP">
+<title>4. 分割したファイルでのプログラミング</title>
+</head>
+
+<body bgcolor="#a0d8a2">
+
+<font color="#802020"><h2>4. 分割したファイルでのプログラミング</h2></font>
+【計算機序論２・実習（２０１２年度）】
+
+<a href="./index-j.html#material">目次</a>, 
+<a href="./index-j.html">計算機序論２</a>, 
+<a href="../course-a-j.html">授業科目</a>, 
+<a href="../../index-j.html">www.kameda-lab.org</a>
+<font size="1">2011/11/25a</font>
+
+<hr><!-- +++++++++++++++++++++++++++++++++++ -->
+
+<p >関数サブルーチンを使うようになって、プログラム部品の再利用を始めると、部品によってはもう２度と書き直さないでずっと使いつづけるという状況が出てきます。
+<br><font size="-1" color="gray">（より正確には、そういう状況をあちこちで作り出して楽をするために、サブルーチン化を行うのです）</font>
+
+<p >こうなってくると、もう書き直さないプログラム部品については、別のファイルに移して、不用意に編集しないようにしておくことが無難です。
+<br><font size="-1" color="gray">（こういうことは、プログラム開発効率向上のためには重要なことです）</font>
+
+<p >また、場合によっては、複数のプログラマがそれぞれ別の関数を分担して書くことが考えられます。
+<br>その場合にもファイル分割によるプログラミングは役立ちます。
+
+<p >プログラムをファイル分割して記述すると、その分割されたソースファイル毎にオブジェクトファイルを生成する（コンパイル）ことになります。
+<br>出来上がった複数のオブジェクトファイルを集めて、最終的に１つの実行ファイルを作成（リンク）します。
+
+<p >この複数のオブジェクトファイルをいつの時点で集めるかで、大きく２つの方法に別れます。
+<br>(1) オブジェクトファイル群を適宜生成して、リンクする方法
+<br>(2) オブジェクトファイル群を集めて一旦ライブラリを作成し、それを使ってあとから書いたプログラムとリンクする方法
+
+<p >本節ではその両方について学習します。
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<a name="sec04-1"></a><hr>
+<font color="#802020"><h3>04.1. C言語プログラムのソースファイル分割</h3></font>
+
+<p >C言語では、原則として、ソースファイル分割は、関数単位でなら可能です。
+<br>１つのソースファイルで複数の関数を記述しても構いません。
+<br><font size="-1" color="gray">（これの究極の姿が3.4節のサンプルプログラムですね）</font>
+<br>逆に、１つのソースファイルで関数を１つだけ書くようにしても構いません。
+<br><font size="-1" color="gray">（ファイル数はたくさんになるでしょうが‥）</font>
+<br>特に明文化されたルールはないですが、概ね機能が似ている関数は同じファイルに入れておくほうがよいとされています。
+
+<p >ファイル分割したプログラムソースは、ファイル分割毎にコンパイルをし、オブジェクトファイルを作成します。
+<br>ということは、コンパイルに必要なだけの情報は各ファイルが保持している必要があります。
+<br>そのため、それぞれの分割ソースファイルでは、中で使うライブラリ関数に合わせてヘッダファイルを用意します。
+<br><font size="-1" color="gray">（例えばprintf()を全く使わないソースファイルではstdio.hをインクルードする必要はありません）</font>
+<br><font size="-1" color="gray">（入っていても特に実害はないようにstdio.hは設計されてますが、不要なものは入れないほうがよいでしょう）</font>
+
+<p ><b>【ポイント】</b>
+<br>ソースファイル分割をすると、１つのソースファイルだけを見ていると知らない（わからない）関数が出てきます。
+<br>下記の単純化した例をみてみましょう。
+<br>main()関数が入ったソースファイル(split-sub.c)だけ見ても、operator_add()関数は呼び出す側としては書いていても、その形式や機能に関する手がかりは全くありません。
+<br>分割コンパイルでは、関数の「形式」と「機能(function body)」とは分けて考えます。
+<br>関数の「形式」とは、その関数の名前、引数の数と型、そして関数自身の返値の型で定義されます。これをfunction prototypeと言います。
+<br><font size="-1" color="gray">（関数サブルーチンを今まで書いてきたときの、中括弧が始まるまでの部分のことで、下記例では茶色の部分ですね）</font>
+
+<table border="1">
+<tr>
+<td align="center">分割前 (full.c)
+<td align="center">分割後 (split-main.c)
+<td align="center">分割後 (split-sub.c)
+<tr>
+<td valign="top"><pre>
+#include &lt;stdio.h&gt;
+<font color="brown">float operation_add(float v1, float v2)</font> {
+  return v1 + v2;
+}
+
+int main(int argc, char *argv[]){
+  float val1=14.2;
+  float val2=3.4;
+  printf("result = %f\n", operation_add(val1, val2));
+  return 0;
+}</pre>
+<td valign="top"><pre>
+#include &lt;stdio.h&gt;
+<font color="brown">float operation_add(float v1, float v2)</font> <font color="red">;</font>
+
+
+
+int main(int argc, char *argv[]){
+  float val1=14.2;
+  float val2=3.4;
+  printf("result = %f\n", operation_add(val1, val2));
+  return 0;
+}</pre>
+<td valign="top"><pre>
+
+<font color="brown">float operation_add(float v1, float v2)</font> {
+  return v1 + v2;
+}
+
+
+
+
+
+
+</pre>
+</table>
+
+<p >Function prototypesは、上記のsplit-main.cでのように明示的に書いてもよいのですが、あちこちで参照することになるので、まとめて一つのファイルに書いておく習慣があります。
+<br>このfunction prototypesを集めて保持するのがヘッダファイルの役割の１つです。
+<br>ここでは、04-1-SplitHead.hというファイルに集めることにします。
+<br>そうすると、分割ソースは下記のようになります。
+
+<table border="1">
+<tr>
+<td align="center">分割前 (<a href="code/04-1/04-1-Full.c">04-1-Full.c</a>)
+<td align="center">ヘッダ使用しての分割後 (<a href="code/04-1/04-1-SplitHead-Main.c">04-1-SplitHead-Main.c</a>)
+<td align="center">ヘッダ使用しての分割後 (<a href="code/04-1/04-1-SPlitHead-Sub.c">04-1-SplitHead-Sub.c</a>)
+<td align="center">ヘッダファイル (<a href="code/04-1/04-1-SplitHead.h">04-1-SplitHead.h</a>)
+<tr>
+<td valign="top"><pre>
+#include &lt;stdio.h&gt;
+<font color="brown">float operation_add(float v1, float v2)</font> {
+  return v1 + v2;
+}
+
+int main(int argc, char *argv[]){
+  float val1=14.2;
+  float val2=3.4;
+  printf("result = %f\n", operation_add(val1, val2));
+  return 0;
+}</pre>
+<td valign="top"><pre>
+#include &lt;stdio.h&gt;
+<font color="red">#include "04-1-SplitHead.h"</font>
+
+
+
+int main(int argc, char *argv[]){
+  float val1=14.2;
+  float val2=3.4;
+  printf("result = %f\n", operation_add(val1, val2));
+  return 0;
+}</pre>
+<td valign="top"><pre>
+
+<font color="brown">float operation_add(float v1, float v2)</font> {
+  return v1 + v2;
+}
+
+
+
+
+
+
+</pre>
+<td valign="top"><pre>
+<font color="brown">float operation_add(float v1, float v2)</font> <font color="red">;</font>
+// Function prototype宣言では関数の引数名に意味はないので、
+// float operation_add(float, float) ;
+// でも可。</pre>
+</table>
+
+<p >04-1-SplitHead-Main.cでは、ヘッダファイルのincludeの仕方に２通りあることがわかります。
+<br>ヘッダファイルが &lt; &gt; で囲まれている場合は、コンパイラの導入時設定されたルールに従ってコンパイラがどこかから探してきます。
+<br>ライブラリ関数のヘッダファイルなどがこれに相当します（例：stdio.h, math.hなど。）
+<br>一方、ヘッダファイルが " " で囲まれている場合は、コンパイル時にユーザが明示的にどこのディレクトリを探してきてほしいかを指定します。
+<br>ただ一つの例外がカレントディレクトリで、特に指定しなくても、" "で囲まれたファイルがそこにあればそれを自動的に読み込みます。
+
+<p>ということで、分割コンパイルは、04-1-SplitHead-Main.c, 04-1-SplitHead-Sub.c, 04-1-SplitHead.hをカレントディレクトリに置いた状態で：
+<pre>
+$ gcc -Wall -c 04-1-SplitHead-Main.c <font color="brown">（オブジェクトファイル 04-1-SplitHead-Main.o が作成される）</font>
+$ gcc -Wall -c 04-1-SplitHead-Sub.c <font color="brown">（オブジェクトファイル 04-1-SplitHead-Sub.o が作成される）</font>
+$ gcc -Wall -o 04-1-Split-Go 04-1-SplitHead-Main.o 04-1-SplitHead-Sub.o <font color="brown">（実行ファイル 04-1-Split-Go が作成される。オブジェクトファイルの並び順は任意）</font>
+$ ./04-1-Split-Go
+</pre>
+という手順になります。
+
+<p ><b>【動的ライブラリ】</b>
+<br>上記手順の３番目の04-1-Split-Goの生成で実行ファイルが生成されていますが、実は最近の開発実行環境ではこれは最終的な実行ファイルではありません。
+<br>さらに、上記手順の４番目でエンターキーを押した瞬間に、幾つかの動的ライブラリが付加され、ようやくアプリケーションプログラムとして実行できる状態になります。
+<pre>
+$ ldd 04-1-SPlit-Go
+</pre>
+とすることで、どれだけの動的ライブラリを実行時に呼び出す予定かがわかります。
+<br><font size="-1" color="gray">（１つでも欠けていると実行できません）</font>
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<a name="sec04-2"></a><hr>
+<font color="#802020"><h3>04.2. 簡易電卓・分割コンパイル版</h3></font>
+
+<p >今度は、4.1節と同じ手法を3.4節の簡易電卓プログラム（<a href="code/03-4/03-4-SimpleCalculator.c">03-4-SimpleCalculator.c</a>）に適用してみましょう。
+<br>一度は自分でやってみて、それから内容の確認をするように。
+<br><font size="-1" color="gray">（要望が多いのでこういう結果も載せてますが安易に結果を見てしまうと学習効果があがらず、結局自分の首を絞めますよ。）</font>
+
+<p >簡易電卓プログラムのソースファイル分割について、以下のような方針を立てましょう。
+<br>(1) 加減乗除の基本４演算に対応する４つの関数が入ったソースファイル。これは１度書いたら、おそらく二度と手を加えないでしょう。
+<br><font size="-1" color="gray">（その意味では、誰が書いても似たようなソースになると思われるので、自分で書かずに、他の人の手になるものでもいいかもしれませんね）</font>
+<br>(2) それ以外の新しい演算に対応する関数が入ったソースファイル。
+<br><font size="-1" color="gray">（これは各人がオリジナルな関数を用意する可能性が高いので、他の人に書いてもらう可能性は低いですが、それでも１度書いたら変更することはあまりないでしょう）</font>
+<br>(3) 上記(1)(2)の関数プロトタイプをまとめたヘッダファイル。
+<br><font size="-1" color="gray">（もし(1)(2)に新しい関数を追加したら、ここに対応する関数プロトタイプを追加していく必要があります）</font>
+<br>(4) main()関数が入ったソースファイル。これはユーザインタフェースなども司り、変更の可能性が高いです。
+
+<p >下記が実際の分割例です。この通りである必要はありません。
+<br><a href="code/04-2/04-2-SC-BasicFunctions.c">04-2-SC-BasicFunctions.c</a>：加減乗除の基本４演算に対応する４つの関数
+<br><a href="code/04-2/04-2-SC-ExtraFunctions.c">04-2-SC-ExtraFunctions.c</a>：新しい演算に対応する関数
+<br><a href="code/04-2/04-2-SC.h">04-2-SC.h</a>：共通ヘッダファイル
+<br><a href="code/04-2/04-2-SC-Main.c">04-2-SC-Main.c</a>：main()関数
+
+<p >こちらはコンパイル例です。
+<pre>
+$ gcc -Wall -c 04-2-SC-BasicFunctions.c
+$ gcc -Wall -c 04-2-SC-ExtraFunctions.c
+$ gcc -Wall -c 04-2-SC-Main.c
+$ gcc -Wall -o 04-2-SC-Go 04-2-SC-Main.o 04-2-SC-BasicFunctions.o 04-2-SC-ExtraFunctions.o
+$ ./04-2-SC-Go
+</pre>
+
+<p ><b>【余談】ヘッダファイル中のマクロを使ったトリック</b>
+
+<p >04-2-SC.hの中には、見慣れないマクロ命令（#で始まる行のこと）があります。
+<br>#ifndef → あるマクロがまだ未定義であれば条件に適合したとみなして、次に出てくる#endifまでの部分を全て開示します。
+<br><font size="-1" color="gray">（if not defined 〜 の省略形で ifndef 〜 となっています）</font>
+<br>裏を返せば、あるマクロがすでに定義済であれば、次に出てくる#endifまでの部分を全部無かったことにします。
+<br>今、ifndefの引数には _04_2_SC_H というオリジナルなマクロが用意されてます。
+<br>こうしておくことで、１つのソースプログラム内で２回 #include "04-2-SC.h" とされても破綻しないようになっています。
+<br>同じ仕掛けは、例えば /usr/include/math.h の _MATH_H マクロで見ることができます。
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<a name="sec04-3"></a><hr>
+<font color="#802020"><h3>04.3. 簡易電卓・お手製ライブラリ使用版</h3></font>
+
+<p >分割コンパイルでプログラミングしていると、幾つかのソースファイルについて更新する必要がなくなってきたりします。
+<br>こうしたソースファイルについて、4.2節の最後の作業のようにオブジェクトファイルをいちいち全部作り直すのは無駄です。
+<br>例えば、先の例で 04-2-SC-BasicFunctions.c と 04-2-SC-ExtraFunctions.c とに手を入れくなって、 04-2-SC-Main.c だけをいじってテストをしているときに、04-2-SC-BasicFunctions.o と 04-2-SC-ExtraFunctions.o まで毎回作り直す必要はありません。
+<pre>
+$ gcc -Wall -c 04-2-SC-Main.c
+$ gcc -Wall -o 04-2-SC-Go 04-2-SC-Main.o 04-2-SC-BasicFunctions.o 04-2-SC-ExtraFunctions.o
+$ ./04-2-SC-Go
+</pre>
+これだけを繰り返せばいいことになります。
+
+<p >こうなってくると、04-2-SC-BasicFunctions.o と 04-2-SC-ExtraFunctions.o をリンク時（04-2-SC-Go作成時）にいちいち指定するのが面倒に感じてきます。
+<br><font size="-1" color="gray">（そう感じない？でも簡易電卓に関するユーザ定義関数が増えて、こうした分割ソースファイルが１０個ぐらいあるとだんだん嫌になってきませんか？打ち間違いも増えそうです）</font>
+
+<p >そこで、こうした「全くもう改変を加えない分割ソースファイル群に対応するオブジェクトファイル群」をまとめて扱おう、という概念が生まれました。
+<br>それが<b><u>ライブラリ</u></b>です。
+
+<p ><b>【ライブラリ作成】</b>
+<br>ライブラリの作成は意外に簡単です。
+<br>4.2節の最後の状態を仮定します。
+<br>ライブラリの作成には、ar というコマンドを使います。
+<pre>
+$ ar r libSC.a 04-2-SC-BasicFunctions.o 04-2-SC-ExtraFunctions.o <font color="brown">（お手製ライブラリ libSC.a を04-2-SC-BasicFunctions.o 04-2-SC-ExtraFunctions.o から作成）</font>
+</pre>
+
+<p >作ったからには、出来たことを確認しておきましょう。
+<pre>
+$ ls <font color="brown">（libSC.aが出来ていることを確認）</font>
+$ ar t libSC.a <font color="brown">（libSC.aの中身が２つのオブジェクトファイルから構成されていることを確認）</font>
+</pre>
+
+<p >libSC.aの生成が無事確認できたら、もう 04-2-SC-BasicFunctions.c, 04-2-SC-ExtraFunctions.c, 04-2-SC-BasicFunctions.o, 04-2-SC-ExtraFunctions.o は不要です。
+<br><font size="-1" color="gray">（気持ちよく消してしまってもいいのですが、ちょっと安全のために、どこか別のディレクトリにでも移しておきましょう）</font>
+<br><font size="-1" color="gray">（$ mkdir old_src）</font>
+<br><font size="-1" color="gray">（$ mv 04-2-SC-BasicFunctions.c 04-2-SC-ExtraFunctions.c 04-2-SC-BasicFunctions.o 04-2-SC-ExtraFunctions.o old_src）</font>
+
+<p >この先必要なのは、04-2-SC.h と libSC.a の２つだけになります。
+<br>この２つ（お手製ライブラリ）を使って、04-2-SC-Main.c で簡易電卓を記述してコンパイルするときは下記のようにします。
+<pre>
+$ gcc -Wall -c 04-2-SC-Main.c
+$ gcc -Wall -o 04-2-SC-Go 04-2-SC-Main.o -L. -lSC <font color="brown">（リンク時、-L. と -lSC に注意）</font>
+$ ./04-2-SC-Go
+</pre>
+ここで -lSC は libSC.a を利用する、という意思表示です。
+<br><font size="-1" color="gray">（なぜ libSC.a を使いたいと意思表示するときに、lib と .a を外して、-l と SC の間にスペースをいれないようにして指定しなくていけないかは、<u>昔からの伝統の都合でそうなってるんです‥</u>、としか言いようがないです）</font>
+<br>-lSCだけだと、コンパイラ（正確にはリンカとして働いているgccコンパイラ）指定のディレクトリ内しか libSC.a を探そうとしないので、カレントディレクトリをその探索に加えてほしいという意思表示の為に、 -L. を付け加えます。
+<br><font size="-1" color="gray">（なぜカレントディレクトリ . を指定するときに、-L と . との間にスペースをいれないようにして指定しなくていけないかは、これまた<u>昔からの伝統の都合でそうなってるんです‥</u>、としか言いようがないです）</font>
+
+<p >今は実際にはもう編集しているのは04-2-SC-Main.cだけなので、上記の作業はもう少し単純化して、
+<br><font size="-1" color="gray">（正確に言えばコンパイルとリンクをまとめてgccにお願いして、ということです）</font>
+<pre>
+$ gcc -Wall -o 04-2-SC-Go 04-2-SC-Main.c -L. -lsc
+</pre>
+だけで構わなくなります。
+
+<p >これ、何か見たことがある感じではありませんか？
+<br>数学ライブラリ関数を使った簡単なプログラムを書いたときのことを思い出してください。
+<br><font size="-1" color="gray">（本科目より前にそういうことをしたことがあるはずです。カリキュラム的にそうなってるはず。）</font>
+
+<p ><table border="1">
+<tr><td align="center"> math-sample.c
+<tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;math.h&gt;
+int main(int argc, char *argv[]){
+  printf("sin(45[degree]) is %f\n", sin(1.57078));
+  return 0;
+}</pre></table>
+<pre>
+$ gcc math-sample.c -lm
+$ ./a.out
+
+
+
+
+
+
+
+<hr>
+kameda[at]iit.tsukuba.ac.jp, 2011.
+</body>
+</html>
