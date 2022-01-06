@@ -13,3 +13,16 @@ float operation_absdiff(float v1, float v2) {
   return v2 - v1;
 }
 
+float operation_log(float v1, float v2) {
+  if (v1 > v2)
+    return v1 - v2;
+  return v2 - v1;
+}
+
+float operation_exp(float v1, float v2) {
+  if (v1 > v2)
+    return v1 - v2;
+  return v2 - v1;
+}
+
+

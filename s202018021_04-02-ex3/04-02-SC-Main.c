@@ -8,8 +8,9 @@
 // main()関数
 
 #include <stdio.h>
+#include <math.h>
 #include <string.h> // strcmp()
-#include "04-2-SC.h" // ユーザ定義の他の関数群
+#include "./04-02-SC.h" // ユーザ定義の他の関数群
 
 int main(int argc, char *argv[]){
   char oneline[80]; // １行分のバッファ,固定長にしておくとsizeof()が利用可能
@@ -34,6 +35,10 @@ int main(int argc, char *argv[]){
       } else if (strcmp(operator, "/") == 0) {
         resultvalue = operation_div(value1, value2);
       } else if (strcmp(operator, "abs") == 0) {
+        resultvalue = operation_absdiff(value1, value2);
+      } else if (strcmp(operator, "exp") == 0) {
+        resultvalue = operation_absdiff(value1, value2);
+      } else if (strcmp(operator, "log") == 0) {
         resultvalue = operation_absdiff(value1, value2);
       }
       printf("%g %s %g = %g\n", value1, operator, value2, resultvalue);
