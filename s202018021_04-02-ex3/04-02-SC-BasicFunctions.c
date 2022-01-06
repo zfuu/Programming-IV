@@ -9,6 +9,7 @@
 
 #include <stdio.h> // printf()が使われているので
 
+
 float operation_plus(float v1, float v2) {
   return v1 + v2;
 }
