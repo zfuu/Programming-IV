@@ -17,6 +17,7 @@ float operation_minus(float v1, float v2) ;
 float operation_mult(float v1, float v2) ;
 float operation_div(float v1, float v2) ;
 
+
 float operation_absdiff(float v1, float v2) ;
 // float operation_max(float v1, float v2) ;
 // float operation_min(float v1, float v2) ;
