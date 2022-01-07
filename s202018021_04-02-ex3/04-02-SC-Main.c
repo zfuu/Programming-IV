@@ -8,7 +8,6 @@
 // main()関数
 
 #include <stdio.h>
-#include <math.h>
 #include <string.h> // strcmp()
 #include "./04-02-SC.h" // ユーザ定義の他の関数群
 
@@ -37,9 +36,9 @@ int main(int argc, char *argv[]){
       } else if (strcmp(operator, "abs") == 0) {
         resultvalue = operation_absdiff(value1, value2);
       } else if (strcmp(operator, "exp") == 0) {
-        resultvalue = operation_absdiff(value1, value2);
+        resultvalue = operation_exp(value1, value2);
       } else if (strcmp(operator, "log") == 0) {
-        resultvalue = operation_absdiff(value1, value2);
+        resultvalue = operation_log(value1, value2);
       }
       printf("%g %s %g = %g\n", value1, operator, value2, resultvalue);
     } else {

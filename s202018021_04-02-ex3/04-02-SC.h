@@ -19,6 +19,8 @@ float operation_div(float v1, float v2) ;
 
 
 float operation_absdiff(float v1, float v2) ;
+float operation_log(float v1, float v2) ;
+float operation_exp(float v1, float v2) ;
 // float operation_max(float v1, float v2) ;
 // float operation_min(float v1, float v2) ;
 
