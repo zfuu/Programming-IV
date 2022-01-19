@@ -1,4 +1,5 @@
 # s202018021_02-03-ex1
+Fu, Ziyu
 
 ## 1. Instruction to compile the code
 
@@ -13,7 +14,7 @@ After using the `cd` (change directory) command to navigate to the correct worki
 This is a very simple piece of logic, where the program simply prints out `argc` and `argv`.
 
 ## 3. Result of execution 
-```bash
+```
 % gcc 02-03-ex1.c
 
 % ./a.out 

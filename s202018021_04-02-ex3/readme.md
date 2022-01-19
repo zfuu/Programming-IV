@@ -1,4 +1,5 @@
 # s202018021_04-02-ex3
+Fu, Ziyu
 
 ## 1. Instruction to compile the code
 
@@ -16,7 +17,7 @@ After using the `cd` (change directory) command to navigate to the correct worki
 In order to extend the functionality of our simple calculator, we can add the logorithm and exponentiation logic to `04-02-SC-ExtraFunctions.c`, and link the corresponding functions to `04-02-SC-Main.c` through the header file `04-02-SC.h`.
 
 ## 3. Result of execution 
-```bash
+```
 % gcc -Wall -c 04-02-SC-BasicFunctions.c
 % gcc -Wall -c 04-02-SC-ExtraFunctions.c
 % gcc -Wall -c 04-02-SC-Main.c
