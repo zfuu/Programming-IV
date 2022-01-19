@@ -16,6 +16,8 @@ float operation_absdiff(float v1, float v2) {
   return v2 - v1;
 }
 
+
+//Here we have the actual calculation used to find logorithm and exponentiation (by using the functions in math.h)
 float operation_log(float v1, float v2) {
   if ((v1 > 0) && (v1 != 1) && (v2 >= 0)){ //It also doesn't make sense to have log base 1
     return log(v2)/log(v1);

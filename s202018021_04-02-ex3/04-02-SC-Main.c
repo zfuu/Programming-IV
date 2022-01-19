@@ -35,6 +35,8 @@ int main(int argc, char *argv[]){
         resultvalue = operation_div(value1, value2);
       } else if (strcmp(operator, "abs") == 0) {
         resultvalue = operation_absdiff(value1, value2);
+      
+      //Here we have the connection between imported logic and console interface. 
       } else if (strcmp(operator, "exp") == 0) {
         resultvalue = operation_exp(value1, value2);
       } else if (strcmp(operator, "log") == 0) {
