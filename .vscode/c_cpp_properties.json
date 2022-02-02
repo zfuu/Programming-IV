@@ -3,8 +3,7 @@
         {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/Users/zfu/GitHub/Programming-IV/s202018021_04-02-ex3/"
+                "${workspaceFolder}/**"
             ],
             "defines": [],
             "macFrameworkPath": [
