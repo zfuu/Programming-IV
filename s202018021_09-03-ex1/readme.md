@@ -1,4 +1,4 @@
-# s202018021_08-04-ex8
+# s202018021_09-03-ex1
 Fu, Ziyu
 
 ## 1. Instruction to compile the code
@@ -18,10 +18,7 @@ After using the `cd` (change directory) command to navigate to the correct worki
 ```
 
 ## 2. Brief review of the code
-This exercise asks us to rotate the OpenGL logo so that it looks like it's on the tip of a clockhand. The key is to rotate the logo and then translate it a set distance to the side. 
-
-That's pretty easy to do. We just need to recycle the `loopcounter` logic from the earlier exercises, and pass that value into the `glRotatef()` command. I set `loopmax` so be `360` so that the logo would rotate a full 360 degree. Works like a charm. 
-
+This exercise asks us to rotate the OpenGL logo so that it's flipping along the x axis. This is a pretty easy modification on `08-04-Rendering.c`. The `glRotatef()` function needs to be modified. so that only the `x` vector is active. 
 ## 3. Result of execution 
 ```
 % ./Go

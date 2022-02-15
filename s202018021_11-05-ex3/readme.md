@@ -1,4 +1,4 @@
-# s202018021_08-04-ex8
+# s202018021_11-05-ex3
 Fu, Ziyu
 
 ## 1. Instruction to compile the code
@@ -18,9 +18,10 @@ After using the `cd` (change directory) command to navigate to the correct worki
 ```
 
 ## 2. Brief review of the code
-This exercise asks us to rotate the OpenGL logo so that it looks like it's on the tip of a clockhand. The key is to rotate the logo and then translate it a set distance to the side. 
+This exercise asks us to add a 2D object to be rendered together with the 3D CG object. This is pretty easy to do, when we copy the old custom logo code into `07-03-EmbededObjects.c`. And in order to actually add the 2D object into the frame, we need to call `ic2_OpenGLLogo(logoscale)` in `11-05-Rendering.c`. 
 
-That's pretty easy to do. We just need to recycle the `loopcounter` logic from the earlier exercises, and pass that value into the `glRotatef()` command. I set `loopmax` so be `360` so that the logo would rotate a full 360 degree. Works like a charm. 
+Changing the rotation, translation, as well as the scaling factor is also done in `11-05-Rendering.c`. I changed mine so that it flips alound the x axis. 
+
 
 ## 3. Result of execution 
 ```
@@ -28,6 +29,8 @@ That's pretty easy to do. We just need to recycle the `loopcounter` logic from t
 ```
 
 ## 4. Explanation for extra files
-`OUTPUT1.png` - A screenshot of the output frame at an arbitrary angle.
+`OUTPUT1.png` - A screenshot of the objects at an arbitrary angle.
 
-`OUTPUT2.png` - A screenshot of the output frame at another arbitrary angle.
+`OUTPUT2.png` - A screenshot of the objects at another arbitrary angle.
+
+`OUTPUT3.png` - A screenshot of the objects at yet another arbitrary angle.
